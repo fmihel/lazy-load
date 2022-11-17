@@ -1,9 +1,14 @@
-import imports from './imports';
-import loadCSS from './loadCSS';
-import loadJSON from './loadJSON';
-import loadScript from './loadScript';
+import _imports from './imports';
+import _loadCSS from './loadCSS';
+import _loadJSON from './loadJSON';
+import _loadScript from './loadScript';
 
-export {
+export const imports = _imports;
+export const loadCSS = _loadCSS;
+export const loadJSON = _loadJSON;
+export const loadScript = _loadScript;
+
+export default {
     imports,
     loadCSS,
     loadJSON,

@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "lazy load and imports module webapp",
   "main": "dist/lazy-load.min.js",
+  "types": "source/types.d.ts",
   "scripts": {
     "build": "webpack",
     "git-push": "git push origin main && git push origin main --tag",

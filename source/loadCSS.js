@@ -1,5 +1,5 @@
-function loadCSS(file, param) {
-    const p = { ...loadCSS.param.css, ...param };
+function loadCSS(file, param = {}) {
+    const p = { ...loadCSS.param, ...param };
     const ext = `.${file.split('.').pop()}`;
     const href = p.root + file.replace(ext, `.${p.hash}${ext}`);
     const link = document.createElement('link');

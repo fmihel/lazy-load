@@ -3,7 +3,7 @@ const path = require('path');
 //const mode = 'development';
 const mode = 'production';
 let outputPath = path.resolve(__dirname,'dist');
-
+//let outputPath = 'C:\\work\\test2\\node_modules\\fmihel-lazy-load\\dist';
 
 module.exports = {
   entry: {
