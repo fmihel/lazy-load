@@ -147,7 +147,7 @@ loadJSON('http://site.ru/path/file.json')
 
 ```
 
-
+## ```deprecated```
 # Отложенный импорт модуля
 
 ```function imports(...names:string):Promise``` - загрузка модуля\
