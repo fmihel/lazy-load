@@ -156,7 +156,7 @@ loadJSON('http://site.ru/path/file.json')
 \
 ```function imports.add(modules:object)``` - регистрация модуля\
 `modules` - object { modname1:function, modname2:function,...}\
-`modname function` - ф-ция возвращающая результат выполнения ф-ции import для регистрируемого модуля, см. пример\
+`modname function` - ф-ция возвращающая результат выполнения ф-ции import для регистрируемого модуля, см. пример
 
 #### Пример
 
@@ -174,13 +174,15 @@ import { imports } from 'fmihel-lazy-load';
 
 // регистрируем подгружаемый модуль
 imports.add({
+    lodash() { return import(/* webpackChunkName: "lodash" */ 'lodash').then((module) => ({ _: module })); },
     modForLoad() { return import(/* webpackChunkName: "modForLoad" */ './path/modForLoad').then((modForLoad) => ({ modForLoad })); },
 })
 ...
 // загружаем модуль и используем его ф-ционал
-imports('modForLoad')
-    .then({modForLoad}=>{
+imports('modForLoad','lodash')
+    .then({modForLoad,_}=>{
         modForLoad.default.func1();
+        _.fill(Array(3),'aaa');// lodash using
     });
 ```
 
