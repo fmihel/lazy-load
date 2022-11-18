@@ -101,7 +101,7 @@ module.exports = {
 
 ```
 
-## Загрузка JSON
+# Загрузка JSON
 ```function loadJSON(url:string,param?:object):Promise```\
 `url` - путь к json файлу\
 `param` - настройки для ф-ции fetch\
@@ -118,7 +118,7 @@ loadJSON('http://site.ru/path/file.json')
 
 ```
 
-## Загрузка скрипта javascript
+# Загрузка скрипта javascript
 ```function loadScript(url:string, varName: false | string):Promise```
 `url` - путь к js файлу\
 `varName` - имя глобальной переменной, которая описана через  ```var```\
@@ -148,7 +148,7 @@ loadJSON('http://site.ru/path/file.json')
 ```
 
 
-## Отложенный импорт модуля
+# Отложенный импорт модуля
 
 ```function imports(...names:string):Promise``` - загрузка модуля\
 `names` - имена необходимых к загрузке модулей, регистрация модулей осуществляется через ф-йию ```imports.add```\
