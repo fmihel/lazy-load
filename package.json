@@ -1,6 +1,6 @@
 {
   "name": "fmihel-lazy-load",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "lazy load and imports module webapp",
   "main": "dist/lazy-load.min.js",
   "types": "source/types.d.ts",
