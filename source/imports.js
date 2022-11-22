@@ -1,98 +1,72 @@
+/* eslint-disable no-return-assign */
 /* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable array-callback-return */
 
-// Работа с отложенной загрузкой webpack
-// Пример работы:
-//    import imports from 'fmihel-browser-lib';
-//
-// описание модулей
-//    const modules = {
-//        lazy() { return import(/* webpackChunkName: "lazy" */ './lazy').then((module) => ({ lazy:module })); },
-//        lodash() { return import(/* webpackChunkName: "lodash" */ 'lodash').then((module) => ({ _: module })); },
-//    };
-// добавление модулей
-//    imports.add(modules);
-//    ...
-//    ...
-// отложенный вызов
-//    imports('lazy','lodash')
-//       .then( {lazy,_} =>{
-//         lazy.default.main(); // for export default
-//         lazy.second();       // for export
-//         _.fill(Array(3),'aaa');// lodash using
-//    });
-//
+/** Работа с отложенной загрузкой webpack
+ * Пример работы:
+ * import imports from 'fmihel-lazy-load';
+ *
+ * описание модулей (вынести в отдельный файл конфигурации)
+ * imports.add({
+ *      _() { return import('lodash').then((mod) => mod.default); },
+ *      $() { return import('jquery').then((mod) => mod.default); },
+ *      myUnit() { return import('../utils/myUnit'); }
+ * };
+ *
+ * отложенный вызов
+ * imports('myUnit',_).then( {myUnit,_}=>{
+ *      let getFromMyUnit = myUnit.default.main;    // for export default
+ *      _.fill(Array(3),'aaa');                     // lodash using
+ *  });
+*/
 
 class Imports {
     constructor() {
-        this._private = {
-            modules: {},
-        };
+        this.modules = {};
     }
 
-    params(params = false) {
-        if (params === false) {
-            return {
-                ...this._private,
-            };
-        }
-
-        const { modules, ...other } = params;
-
-        return {
-            ...this._private,
-            ...other,
-            modules: this.modules(modules),
-        };
+    /** добавление списка модулей, для отложенной загрузки
+     *  Ex.
+     *  add({
+     *      lodash() { return import('lodash').then((mod) => mod.default); },
+     * })
+    */
+    add(mods = {}) {
+        const self = this;
+        const names = Object.keys(mods);
+        names.map((name) => {
+            if (!(name in self.modules)) {
+                self.modules[name] = mods[name];
+            }
+        });
     }
 
-    modules(list = false) {
-        const t = this;
-        if (typeof list === 'object') {
-            const keys = Object.keys(list);
-
-            keys.map((name) => {
-                if (name in t._private.modules) {
-                    console.warn(`module ${name} is already added to imports.modules`);
-                } else {
-                    t._private.modules[name] = list[name];
-                }
-            });
-        }
-
-        return t._private.modules;
-    }
-
+    /** загрузка списка модулей, в случае успеха возвращает промис с объектом, свойства которого соотвествуют
+     *  указанным к загрузке модулям
+     *  Ex:
+     *  load('lodash','$').then(({lodash,$})=>{
+     *      $('#my').css({color:'red'});
+     *  })
+     */
     load(...names) {
-        const t = this;
+        const self = this;
         return new Promise((ok, err) => {
-            const modules = t.modules();
-            const modulesNames = Object.keys(modules);
-
-            // создаем список загружаемых модулей
-            const loadingModules = [];
-
             for (let i = 0; i < names.length; i++) {
-                if (modulesNames.indexOf(names[i]) === -1) {
-                    const msg = `module ${names[i]} is not added to imports.modules`;
+                if (!(names[i] in self.modules)) {
+                    const msg = `lazy module ${names[i]} not defined`;
                     err(msg);
                     return;
                 }
-                loadingModules.push(modules[names[i]]);
             }
-
-            Promise.all(loadingModules.map((mod) => mod()))
-                .then((result) => {
-                    let out = {};
-                    result.map((mod) => {
-                        out = { ...out, ...mod };
-                    });
-                    ok(out);
-                }).catch((e) => {
-                    err(e);
-                });
-        });
+            ok();
+        })
+            .then(() => Promise.all(names.map((name) => self.modules[name]())))
+            .then((o) => {
+                const out = {};
+                names.map((name, i) => out[name] = o[i]);
+                return out;
+            });
     }
 }
 
@@ -102,6 +76,6 @@ function imports(...names) {
     return _imports.load(...names);
 }
 
-imports.add = (modules) => { _imports.modules(modules); };
+imports.add = (modules) => { _imports.add(modules); };
 
 export default imports;

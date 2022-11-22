@@ -147,7 +147,6 @@ loadJSON('http://site.ru/path/file.json')
 
 ```
 
-## ```deprecated```
 # Отложенный импорт модуля
 
 ```function imports(...names:string):Promise``` - загрузка модуля\
@@ -174,28 +173,15 @@ import { imports } from 'fmihel-lazy-load';
 
 // регистрируем подгружаемый модуль
 imports.add({
-    lodash() { return import(/* webpackChunkName: "lodash" */ 'lodash').then((module) => ({ _: module })); },
-    modForLoad() { return import(/* webpackChunkName: "modForLoad" */ './path/modForLoad').then((modForLoad) => ({ modForLoad })); },
+    _() { return import('lodash').then((mod) => mod.default); },
+    $() { return import('jquery').then((mod) => mod.default); },
+    modForLoad() { return import('./path/modForLoad')},
 })
 ...
 // загружаем модуль и используем его ф-ционал
-imports('modForLoad','lodash')
-    .then({modForLoad,_}=>{
+imports('modForLoad','_')
+    .then({ modForLoad , _ } => {
         modForLoad.default.func1();
         _.fill(Array(3),'aaa');// lodash using
     });
 ```
-
-`webpack.config.js`
-```js
-module.exports = {
-    ...
-    output:{
-        ...
-        // шаблон для сборок отложенных модулей
-        chunkFilename: '[name].bundle.[chunkhash].js',
-    },
-}
-```
-
-
