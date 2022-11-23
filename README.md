@@ -54,6 +54,7 @@ loadCSS.param = {
     ...loadCSS.param,
     hash: CSS_HASH,         // hash генерируемый в webpack.config.js
     root: CSS_ROOT_PATH,    // путь к папке dist/style/app/client
+    enable:true,            // включает/выключает механизм загрузки (по умолчанию = true)
 };
 ```
 
